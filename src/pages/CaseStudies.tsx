@@ -163,13 +163,17 @@ const caseStudies = [
 ];
 
 // Dynamically import all images from src/assets/case-studies
-const imageModules = import.meta.glob<string>('/src/assets/case-studies/**/*.{png,jpg,jpeg,webp,gif}', { eager: true, as: 'url' });
+const imageModules = import.meta.glob<{ default: string }>(
+  '/src/assets/case-studies/**/*.{png,jpg,jpeg,webp,gif}',
+  { eager: true }
+);
 
-const getImagesForClient = (folderName: string) => {
+const getImagesForClient = (folderName: string): string[] => {
   const images: string[] = [];
   for (const path in imageModules) {
     if (path.includes(`/case-studies/${folderName}/`)) {
-      images.push(imageModules[path] as string);
+      const url = imageModules[path]?.default;
+      if (url) images.push(url);
     }
   }
   // Sort images to ensure consistent order (e.g., 1.webp, 2.webp)

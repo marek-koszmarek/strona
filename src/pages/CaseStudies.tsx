@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import SEO from '../components/SEO';
@@ -279,6 +280,27 @@ export default function CaseStudies() {
           </motion.article>
         ))}
       </div>
+      {/* CTA Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98] }}
+        className="border-t border-white/20 pt-24 pb-8 flex flex-col items-center gap-10 text-center"
+      >
+        <p className="text-white/40 text-sm uppercase tracking-[0.2em] font-mono">
+          {t('Masz projekt?', 'Got a project?')}
+        </p>
+        <Link
+          to="/kontakt"
+          className="group relative inline-block px-10 py-5 overflow-hidden rounded-full border border-white/20 hover:border-white transition-colors duration-500"
+        >
+          <div className="absolute inset-0 bg-white translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-500" />
+          <span className="relative z-10 text-xs uppercase tracking-[0.2em] font-bold group-hover:text-black transition-colors duration-500">
+            {t('Rozpocznij współpracę', 'Start a project')}
+          </span>
+        </Link>
+      </motion.div>
     </motion.main>
   );
 }

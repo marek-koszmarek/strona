@@ -4,10 +4,13 @@ import { useLanguage } from '../context/LanguageContext';
 import SEO from '../components/SEO';
 
 // ─── Dane projektów ────────────────────────────────────────────────────────────
-// imageCount = liczba zdjęć w public/case-studies/{folderName}/
+// folderPath = nazwa folderu w public/ (dokładna, z wielkimi literami i spacjami)
+// filePrefix = prefix nazwy pliku (np. m1 → m1_1.webp)
+// imageCount = liczba zdjęć
 const caseStudies = [
   {
-    id: '01', folderName: 'm1', imageCount: 4,
+    id: '01',
+    folderPath: 'M1', filePrefix: 'm1', imageCount: 4,
     category: 'Retail', client: 'EPP',
     scope:   'Design, Social Media, Konkursy, AI, Kampanie reklamowe (Meta, Programmatic)',
     scopeEn: 'Design, Social Media, Contests, AI, Advertising Campaigns (Meta, Programmatic)',
@@ -17,7 +20,8 @@ const caseStudies = [
     deliveryEn: 'We created a social media management model, while coordinating ambassador collaborations with over 50 content creators. Based on proprietary data analysis models, together with partners, we created activities that allow measuring and optimizing the cost of footfall acquisition.',
   },
   {
-    id: '02', folderName: 'sentione', imageCount: 4,
+    id: '02',
+    folderPath: 'SentiOne', filePrefix: 'sentione', imageCount: 4,
     category: 'Technology', client: 'SentiOne',
     scope:   'Social Media, Design, Performance Marketing',
     scopeEn: 'Social Media, Design, Performance Marketing',
@@ -27,7 +31,8 @@ const caseStudies = [
     deliveryEn: 'We built a communication plan and a performance activity structure for all markets the Client communicates with. We were responsible for cooperation with the sales department and the lead generation results.',
   },
   {
-    id: '03', folderName: 'komisja', imageCount: 4,
+    id: '03',
+    folderPath: 'Komisja europejska', filePrefix: 'komisja', imageCount: 4,
     category: 'Politics', client: 'Komisja Europejska',
     scope:   'Strategia Komunikacji, Social Media, PR',
     scopeEn: 'Communication Strategy, Social Media, PR',
@@ -37,7 +42,8 @@ const caseStudies = [
     deliveryEn: 'We created a comprehensive strategic foundation: from in-depth analysis of target groups and media monitoring to creative concepts. We supported the client at every stage, ensuring precise briefing of executive agencies.',
   },
   {
-    id: '04', folderName: 'buildingcompanion', imageCount: 4,
+    id: '04',
+    folderPath: 'Builing companion', filePrefix: 'buildingcompanion', imageCount: 4,
     category: 'Construction', client: 'Xella / Building Companion',
     scope:   'Social Media, Design, Copywriting',
     scopeEn: 'Social Media, Design, Copywriting',
@@ -47,7 +53,8 @@ const caseStudies = [
     deliveryEn: 'We developed a unique concept and brand tonality, which we translated into specific communication segments. We used real insights from media monitoring to respond to the actual needs of the audience and build authentic engagement.',
   },
   {
-    id: '05', folderName: 'monting', imageCount: 4,
+    id: '05',
+    folderPath: 'Monting', filePrefix: 'monting', imageCount: 4,
     category: 'Real Estate', client: 'Monting Development',
     scope:   'Branding, Social Media, Design, Copywriting, Web Development',
     scopeEn: 'Branding, Social Media, Design, Copywriting, Web Development',
@@ -57,17 +64,19 @@ const caseStudies = [
     deliveryEn: 'We created a complete brand base: from the name and logotype to the communication strategy. We designed advertising materials and a website with an apartment search engine.',
   },
   {
-    id: '06', folderName: 'beanandbuddies', imageCount: 4,
+    id: '06',
+    folderPath: 'Bean', filePrefix: 'beanandbuddies', imageCount: 4,
     category: 'FMCG', client: 'Bean and Buddies',
     scope:   'Social Media, Design, Copywriting',
     scopeEn: 'Social Media, Design, Copywriting',
-    challenge:   'Wyróżnić lokalnego producenta kawy w nasyconym środowisku social mediów i zbudować lojalną społeczności wokół marki.',
+    challenge:   'Wyróżnić lokalnego producenta kawy w nasyconym środowisku social mediów i zbudować lojalną społeczność wokół marki.',
     challengeEn: 'Distinguish a local coffee producer in a saturated social media environment and build a loyal community around the brand.',
-    delivery:   'Odeszliśmy od schematów. Postawiliśmy na odważny design, język, który skraca dystans i szybkie reakcje w ramach Real-Time Marketingu. Dzięki wykorzystaniu memów i autentycznej komunikacji, zbudowaliśmy zaangażowaną społeczność.',
-    deliveryEn: 'We stepped away from the usual patterns. We focused on bold design, language that shortens the distance, and quick reactions within Real-Time Marketing. Thanks to memes and authentic communication, we built an engaged community.',
+    delivery:   'Odeszliśmy od schematów. Postawiliśmy na odważny design, język, który skraca dystans i szybkie reakcje w ramach Real-Time Marketingu. Dzięki autentycznej komunikacji zbudowaliśmy zaangażowaną społeczność.',
+    deliveryEn: 'We stepped away from the usual patterns. We focused on bold design, language that shortens the distance, and quick reactions within Real-Time Marketing. Thanks to authentic communication, we built an engaged community.',
   },
   {
-    id: '07', folderName: 'portman', imageCount: 4,
+    id: '07',
+    folderPath: 'Portman Lights', filePrefix: 'portman', imageCount: 4,
     category: 'Event Technology', client: 'Portman Lights',
     scope:   'Social Media, Design, Strategy',
     scopeEn: 'Social Media, Design, Strategy',
@@ -77,7 +86,8 @@ const caseStudies = [
     deliveryEn: 'We refined the visual layer to a premium standard, tailored to global markets. We prepared English-language communication segments that consolidated the brand\'s position as an expert in the stage lighting industry.',
   },
   {
-    id: '08', folderName: 'punkta', imageCount: 4,
+    id: '08',
+    folderPath: 'Punkta', filePrefix: 'punkta', imageCount: 4,
     category: 'Fintech / Insurance', client: 'Punkta',
     scope:   'Social Media, Video, Ads, Design, Copywriting',
     scopeEn: 'Social Media, Video, Ads, Design, Copywriting',
@@ -87,74 +97,69 @@ const caseStudies = [
     deliveryEn: 'We abandoned generic communication in favor of building a strong brand on social media. We created an original video format on YouTube and the first automotive commentary in Poland.',
   },
   {
-    id: '09', folderName: 'enstudios', imageCount: 4,
+    id: '09',
+    folderPath: 'eN Studios', filePrefix: 'enstudios', imageCount: 4,
     category: 'Creative / Production', client: 'En Studios',
     scope:   'Design, Social Media, Copywriting, Web Development',
     scopeEn: 'Design, Social Media, Copywriting, Web Development',
-    challenge:   'Zbudować od podstaw wyrazistą tożsamość digitalową dla studia kreatywnego i stworzyć spójny ekosystemem komunikacji.',
+    challenge:   'Zbudować od podstaw wyrazistą tożsamość digitalową dla studia kreatywnego i stworzyć spójny ekosystem komunikacji.',
     challengeEn: 'Build a distinct digital identity for a creative studio from scratch and create a cohesive communication ecosystem.',
     delivery:   'Opracowaliśmy spójny model komunikacji w social mediach i zaprojektowaliśmy stronę www. Wyeliminowaliśmy komunikacyjny szum, stawiając na wyrazisty visual i konkretny komunikat.',
     deliveryEn: 'We developed a cohesive communication model in social media and designed a website. We eliminated communication noise, focusing on a distinct visual and a specific message.',
   },
   {
-    id: '10', folderName: 'luba', imageCount: 4,
+    id: '10',
+    folderPath: 'Luba', filePrefix: 'luba', imageCount: 4,
     category: 'FMCG', client: 'Luba Group',
     scope:   'Branding, Social Media, Ads, Strategy',
     scopeEn: 'Branding, Social Media, Ads, Strategy',
     challenge:   'Wykorzystać potencjał marki do skutecznego wejścia w nowe kategorie produktowe i rynkowe nisze.',
     challengeEn: 'Leverage the brand\'s potential to successfully enter new product categories and market niches.',
-    delivery:   'Zaprojektowaliśmy nowe linie produktów od podstaw - odpowiadając za koncepty, naming, sesje zdjęciowe oraz design opakowań. Zadbaliśmy o pełną oprawę wizualną i kampanie performance.',
-    deliveryEn: 'We designed new product lines from scratch - taking responsibility for concepts, naming, photo sessions, and packaging design. We took care of the full visual setting and performance campaigns.',
+    delivery:   'Zaprojektowaliśmy nowe linie produktów od podstaw — odpowiadając za koncepty, naming, sesje zdjęciowe oraz design opakowań.',
+    deliveryEn: 'We designed new product lines from scratch — taking responsibility for concepts, naming, photo sessions, and packaging design.',
   },
   {
-    id: '11', folderName: 'mmaniak', imageCount: 4,
+    id: '11',
+    folderPath: 'MMAniak', filePrefix: 'mmaniak', imageCount: 4,
     category: 'Sport', client: 'MMAniak',
     scope:   'Sponsoring, Event Marketing, Social Media',
     scopeEn: 'Sponsorship, Event Marketing, Social Media',
     challenge:   'Odświeżyć wizerunek marki i opracować nową strategię komunikacji ukierunkowaną na dynamiczny wzrost sprzedaży online.',
     challengeEn: 'Refresh the brand image and develop a new communication strategy focused on dynamic online sales growth.',
-    delivery:   'Zbudowaliśmy nową tożsamość wizualną marki w social mediach, dopasowaną do specyfiki świata sportów walki. Pozyskaliśmy zawodników UFC jako ambasadorów oraz odpowiadaliśmy całościowo za performance.',
-    deliveryEn: 'We built a new visual brand identity on social media, tailored to the specifics of the combat sports world. We acquired UFC fighters as ambassadors and were entirely responsible for performance.',
+    delivery:   'Zbudowaliśmy nową tożsamość wizualną marki w social mediach, dopasowaną do specyfiki świata sportów walki. Pozyskaliśmy zawodników UFC jako ambasadorów.',
+    deliveryEn: 'We built a new visual brand identity on social media, tailored to the specifics of the combat sports world. We acquired UFC fighters as ambassadors.',
   },
   {
-    id: '12', folderName: 'smartaero', imageCount: 4,
-    category: 'Aviation', client: 'Smart Aero',
-    scope:   'Rebranding, B2B Marketing, Web Design',
-    scopeEn: 'Rebranding, B2B Marketing, Web Design',
-    challenge:   'Przygotować materiał, który pozwoli wyróżnić się topowemu ośrodkowi szkolenia lotniczego w digitalu oraz stworzyć stronę www.',
-    challengeEn: 'Prepare material that will allow a top aviation training center to stand out in digital and create a website.',
-    delivery:   'Zrealizowaliśmy sesję zdjęciową oraz spot reklamowy z wykorzystaniem floty klienta. Zaprojektowaliśmy i wdrożyliśmy nową stronę www, tworząc spójną wizytówkę marki.',
-    deliveryEn: 'We carried out a photo session and a promotional spot using the client\'s fleet. We designed and implemented a new website, creating a cohesive showcase for the brand.',
-  },
-  {
-    id: '13', folderName: 'archicom', imageCount: 4,
+    id: '12',
+    folderPath: 'Archicom', filePrefix: 'archicom', imageCount: 4,
     category: 'Real Estate', client: 'Archicom',
     scope:   'Performance Marketing, 3D Design, Copywriting',
     scopeEn: 'Performance Marketing, 3D Design, Copywriting',
     challenge:   'Stworzyć i wdrożyć kompleksową strategię social media i wspierać działania performance dla ponad 20 inwestycji deweloperskich.',
     challengeEn: 'Create and implement a comprehensive social media strategy and support performance marketing for over 20 real estate investments.',
-    delivery:   'Uporządkowaliśmy system pracy nad projektami, przenosząc zarządzanie komunikacją do Jiry. Wdrożyliśmy narzędzia AI do produkcji contentu foto i wideo, co pozwoliło nam utrzymać wysoką jakość i spójność treści.',
-    deliveryEn: 'We organized the project workflow, moving communication management to Jira. We implemented AI tools for photo and video content production, which allowed us to maintain high quality and consistency of content.',
+    delivery:   'Uporządkowaliśmy system pracy nad projektami, przenosząc zarządzanie komunikacją do Jiry. Wdrożyliśmy narzędzia AI do produkcji contentu foto i wideo.',
+    deliveryEn: 'We organized the project workflow, moving communication management to Jira. We implemented AI tools for photo and video content production.',
   },
 ];
 
-// ─── Generuje URL-e zdjęć z public/case-studies/ ──────────────────────────────
-// Wymagana konwencja: public/case-studies/{folderName}/{folderName}_1.webp ...
-function getImages(folderName: string, count: number): string[] {
+// ─── Generuje URL-e zdjęć z public/ ───────────────────────────────────────────
+// Używa encodeURIComponent dla folderów ze spacjami (np. "Builing companion")
+function getImages(folderPath: string, filePrefix: string, count: number): string[] {
   return Array.from({ length: count }, (_, i) =>
-    `/case-studies/${folderName}/${folderName}_${i + 1}.webp`
+    `/${encodeURIComponent(folderPath)}/${filePrefix}_${i + 1}.webp`
   );
 }
 
 // ─── Galeria zdjęć projektu ────────────────────────────────────────────────────
-function Gallery({ folderName, client, count }: {
-  folderName: string;
+function Gallery({ folderPath, filePrefix, client, count }: {
+  folderPath: string;
+  filePrefix: string;
   client: string;
   count: number;
 }) {
   return (
     <div className="mt-16 md:mt-24 grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-      {getImages(folderName, count).map((src, i) => (
+      {getImages(folderPath, filePrefix, count).map((src, i) => (
         <div key={i} className="aspect-square overflow-hidden bg-white/5 relative group/img">
           <img
             src={src}
@@ -180,11 +185,11 @@ export default function CaseStudies() {
       className="bg-[#050505] min-h-[100dvh] text-white pt-32 pb-24 px-6 sm:px-8 md:px-16 lg:px-24"
     >
       <SEO
-        title="Case Studies | Luźno Agency - Najlepsze Kampanie Digital i Social Media"
-        description="Zobacz nasze realizacje. Poznaj case studies kampanii, które zrealizowaliśmy dla topowych marek. Skuteczny marketing, AI i kreatywność w praktyce."
+        title="Case Studies | Luźno Agency"
+        description="Nasze realizacje — kampanie, strategie i projekty dla topowych marek."
       />
 
-      {/* Nagłówek strony */}
+      {/* Nagłówek */}
       <div className="mb-20 md:mb-32">
         <div className="flex items-center gap-4 mb-8">
           <div className="w-12 h-[1px] bg-white/30" />
@@ -263,8 +268,13 @@ export default function CaseStudies() {
 
             </div>
 
-            {/* Galeria zdjęć */}
-            <Gallery folderName={cs.folderName} client={cs.client} count={cs.imageCount} />
+            {/* Galeria */}
+            <Gallery
+              folderPath={cs.folderPath}
+              filePrefix={cs.filePrefix}
+              client={cs.client}
+              count={cs.imageCount}
+            />
 
           </motion.article>
         ))}

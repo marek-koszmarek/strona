@@ -7,6 +7,7 @@ const caseStudies = [
   {
     id: '01',
     folderName: 'm1',
+    imageCount: 4,
     category: 'Retail',
     client: 'EPP',
     scope: 'Design, Social Media, Konkursy, AI, Kampanie reklamowe (Meta, Programmatic)',
@@ -19,6 +20,7 @@ const caseStudies = [
   {
     id: '02',
     folderName: 'sentione',
+    imageCount: 4,
     category: 'Technology',
     client: 'SentiOne',
     scope: 'Social Media, Design, Performance Marketing',
@@ -31,6 +33,7 @@ const caseStudies = [
   {
     id: '03',
     folderName: 'komisja',
+    imageCount: 4,
     category: 'Politics',
     client: 'Komisja Europejska',
     scope: 'Strategia Komunikacji, Social Media, PR',
@@ -43,6 +46,7 @@ const caseStudies = [
   {
     id: '04',
     folderName: 'buildingcompanion',
+    imageCount: 4,
     category: 'Construction',
     client: 'Xella / Building Companion',
     scope: 'Social Media, Design, Copywriting',
@@ -55,6 +59,7 @@ const caseStudies = [
   {
     id: '05',
     folderName: 'monting',
+    imageCount: 4,
     category: 'Real Estate',
     client: 'Monting Development',
     scope: 'Branding, Social Media, Design, Copywriting, Web Development',
@@ -67,6 +72,7 @@ const caseStudies = [
   {
     id: '06',
     folderName: 'beanandbuddies',
+    imageCount: 4,
     category: 'FMCG',
     client: 'Bean and Buddies',
     scope: 'Social Media, Design, Copywriting',
@@ -79,6 +85,7 @@ const caseStudies = [
   {
     id: '07',
     folderName: 'portman',
+    imageCount: 4,
     category: 'Event Technology',
     client: 'Portman Lights',
     scope: 'Social Media, Design, Strategy',
@@ -91,6 +98,7 @@ const caseStudies = [
   {
     id: '08',
     folderName: 'punkta',
+    imageCount: 4,
     category: 'Fintech / Insurance',
     client: 'Punkta',
     scope: 'Social Media, Video, Ads, Design, Copywriting',
@@ -103,6 +111,7 @@ const caseStudies = [
   {
     id: '09',
     folderName: 'enstudios',
+    imageCount: 4,
     category: 'Creative / Production',
     client: 'En Studios',
     scope: 'Design, Social Media, Copywriting, Web Development',
@@ -115,6 +124,7 @@ const caseStudies = [
   {
     id: '10',
     folderName: 'luba',
+    imageCount: 4,
     category: 'FMCG',
     client: 'Luba Group',
     scope: 'Branding, Social Media, Ads, Strategy',
@@ -127,6 +137,7 @@ const caseStudies = [
   {
     id: '11',
     folderName: 'mmaniak',
+    imageCount: 4,
     category: 'Sport',
     client: 'MMAniak',
     scope: 'Sponsoring, Event Marketing, Social Media',
@@ -139,6 +150,7 @@ const caseStudies = [
   {
     id: '12',
     folderName: 'smartaero',
+    imageCount: 4,
     category: 'Aviation',
     client: 'Smart Aero',
     scope: 'Rebranding, B2B Marketing, Web Design',
@@ -151,6 +163,7 @@ const caseStudies = [
   {
     id: '13',
     folderName: 'archicom',
+    imageCount: 4,
     category: 'Real Estate',
     client: 'Archicom',
     scope: 'Performance Marketing, 3D Design, Copywriting',
@@ -162,22 +175,12 @@ const caseStudies = [
   }
 ];
 
-// Dynamically import all images from src/assets/case-studies
-const imageModules = import.meta.glob<{ default: string }>(
-  '/src/assets/case-studies/**/*.{png,jpg,jpeg,webp,gif}',
-  { eager: true }
-);
-
-const getImagesForClient = (folderName: string): string[] => {
-  const images: string[] = [];
-  for (const path in imageModules) {
-    if (path.includes(`/case-studies/${folderName}/`)) {
-      const url = imageModules[path]?.default;
-      if (url) images.push(url);
-    }
-  }
-  // Sort images to ensure consistent order (e.g., 1.webp, 2.webp)
-  return images.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+// Generate image URLs directly from public/case-studies/
+// Images must be placed in: public/case-studies/{folderName}/{folderName}_1.webp etc.
+const getImagesForClient = (folderName: string, imageCount: number): string[] => {
+  return Array.from({ length: imageCount }, (_, i) =>
+    `/case-studies/${folderName}/${folderName}_${i + 1}.webp`
+  );
 };
 
 export default function CaseStudies() {
@@ -274,9 +277,9 @@ export default function CaseStudies() {
             </div>
 
             {/* Gallery */}
-            {getImagesForClient(cs.folderName).length > 0 && (
+            {getImagesForClient(cs.folderName, cs.imageCount).length > 0 && (
               <div className="mt-16 md:mt-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {getImagesForClient(cs.folderName).map((img, i) => (
+                {getImagesForClient(cs.folderName, cs.imageCount).map((img, i) => (
                   <div key={i} className="aspect-square overflow-hidden bg-white/5 relative group/image">
                     <img 
                       src={img} 

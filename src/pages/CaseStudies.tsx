@@ -163,7 +163,7 @@ const caseStudies = [
 ];
 
 // Dynamically import all images from src/assets/case-studies
-const imageModules = import.meta.glob('/src/assets/case-studies/**/*.{png,jpg,jpeg,webp,gif}', { eager: true, query: '?url', import: 'default' });
+const imageModules = import.meta.glob<string>('/src/assets/case-studies/**/*.{png,jpg,jpeg,webp,gif}', { eager: true, as: 'url' });
 
 const getImagesForClient = (folderName: string) => {
   const images: string[] = [];

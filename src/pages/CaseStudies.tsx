@@ -54,11 +54,6 @@ const ALL_IMAGES: { src: string; alt: string }[] = [
   { src: '/Luba/luba_2.webp', alt: 'Luba Group' },
   { src: '/Luba/luba_3.webp', alt: 'Luba Group' },
   { src: '/Luba/luba_4.webp', alt: 'Luba Group' },
-  // MMAniak
-  { src: '/MMAniak/mmaniak_1.webp', alt: 'MMAniak' },
-  { src: '/MMAniak/mmaniak_2.webp', alt: 'MMAniak' },
-  { src: '/MMAniak/mmaniak_3.webp', alt: 'MMAniak' },
-  { src: '/MMAniak/mmaniak_4.webp', alt: 'MMAniak' },
   // Archicom
   { src: '/Archicom/archicom_1.webp', alt: 'Archicom' },
   { src: '/Archicom/archicom_2.webp', alt: 'Archicom' },

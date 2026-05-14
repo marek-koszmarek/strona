@@ -86,7 +86,7 @@ export default function CaseStudies() {
           </span>
         </div>
         <h1 className="text-[clamp(3.5rem,14vw,9rem)] leading-[0.85] font-black tracking-tighter uppercase">
-          Case<br />Studies
+          {t('Prace', 'Work')}
         </h1>
       </div>
 

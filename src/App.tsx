@@ -9,7 +9,8 @@ import { LanguageProvider } from './context/LanguageContext';
 
 // Lazy load pages for code splitting
 const Home = lazy(() => import('./pages/Home'));
-const CaseStudies = lazy(() => import('./pages/CaseStudies'));
+const CaseStudies = lazy(() => import('./pages/CaseStudies'));           // nowy grid
+const CaseStudiesArchive = lazy(() => import('./pages/CaseStudiesArchive')); // stara wersja
 const Competencies = lazy(() => import('./pages/Competencies'));
 const Vision = lazy(() => import('./pages/Vision'));
 const AISupport = lazy(() => import('./pages/AISupport'));
@@ -42,6 +43,7 @@ function AnimatedRoutes() {
           <Routes location={location}>
             <Route path="/" element={<Home />} />
             <Route path="/case-studies" element={<CaseStudies />} />
+            <Route path="/case-studies-archive" element={<CaseStudiesArchive />} />
             <Route path="/kompetencje" element={<Competencies />} />
             <Route path="/wizja" element={<Vision />} />
             <Route path="/ai-support" element={<AISupport />} />
@@ -66,10 +68,7 @@ export default function App() {
       touchMultiplier: 2,
     });
 
-    // Expose lenis globally for custom scroll behaviors
     (window as any).lenis = lenis;
-
-    // Scroll to top on initial load
     lenis.scrollTo(0, { immediate: true });
 
     function raf(time: number) {

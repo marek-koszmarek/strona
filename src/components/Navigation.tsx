@@ -167,7 +167,7 @@ export default function Navigation() {
 
   const navLinks = [
     { name: 'LUŹNO&', path: '/' },
-    { name: 'Case Studies', path: '/case-studies' },
+    { name: t('Prace', 'Work'), path: '/case-studies' },
     { name: t('Kompetencje', 'Expertise'), path: '/kompetencje' },
     { name: t('Wizja', 'Vision'), path: '/wizja' },
     { name: 'AI Support', path: '/ai-support' },

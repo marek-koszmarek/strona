@@ -6,6 +6,8 @@ import SEO from '../components/SEO';
 
 export default function Contact() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [touched, setTouched] = useState({ name: false, email: false, message: false });
   const [errors, setErrors] = useState<{name?: string, email?: string, message?: string}>({});
@@ -37,11 +39,10 @@ export default function Contact() {
     setTouched(prev => ({ ...prev, [name]: true }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    // Mark all as touched on submit
     setTouched({ name: true, email: true, message: true });
+    setSendError(false);
 
     const validationErrors = validate(formData.name, formData.email, formData.message);
     if (Object.keys(validationErrors).length > 0) {
@@ -49,20 +50,32 @@ export default function Contact() {
       return;
     }
 
-    const subjectPrefix = language === 'pl' ? 'Nowa wiadomość od: ' : 'New message from: ';
-    const namePrefix = language === 'pl' ? 'Imię i nazwisko: ' : 'Name: ';
-    const emailPrefix = language === 'pl' ? 'Email: ' : 'Email: ';
-    const messagePrefix = language === 'pl' ? 'Wiadomość:\n' : 'Message:\n';
+    setIsSending(true);
 
-    const subject = encodeURIComponent(`${subjectPrefix}${formData.name}`);
-    const body = encodeURIComponent(`${namePrefix}${formData.name}\n${emailPrefix}${formData.email}\n\n${messagePrefix}${formData.message}`);
-    
-    window.location.href = `mailto:brief@luzno.agency?subject=${subject}&body=${body}`;
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', message: '' });
-    setTouched({ name: false, email: false, message: false });
-    
-    setTimeout(() => setIsSubmitted(false), 4000);
+    try {
+      const response = await fetch('/send-mail.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', message: '' });
+        setTouched({ name: false, email: false, message: false });
+        setTimeout(() => setIsSubmitted(false), 5000);
+      } else {
+        setSendError(true);
+      }
+    } catch {
+      setSendError(true);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -73,10 +86,11 @@ export default function Contact() {
       transition={{ duration: 1 }}
       className="bg-[#050505] min-h-[100dvh] text-white pt-32 pb-24 px-6 sm:px-8 md:px-16 lg:px-24 flex flex-col"
     >
-      <SEO 
+      <SEO
         title="Kontakt | Luźno Agency - Porozmawiajmy o Twoim Projekcie"
         description="Skontaktuj się z nami. Jesteśmy gotowi, aby pomóc Twojej marce osiągnąć sukces w digitalu i social mediach."
       />
+
       {/* Header */}
       <div className="mb-16 md:mb-24">
         <div className="flex items-center gap-4 mb-8">
@@ -90,7 +104,7 @@ export default function Contact() {
 
       {/* Form & Socials Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 flex-1">
-        
+
         {/* Form */}
         <div className="lg:col-span-7 xl:col-span-6 relative">
           <AnimatePresence mode="wait">
@@ -108,50 +122,50 @@ export default function Contact() {
                 <div>
                   <h3 className="text-2xl font-light mb-2">{t('Dziękujemy za wiadomość!', 'Thank you for your message!')}</h3>
                   <p className="text-white/60 font-light leading-relaxed">
-                    {t('Twój klient poczty został otwarty. Wyślij przygotowaną wiadomość, a my odpowiemy najszybciej jak to możliwe.', 'Your email client has been opened. Send the prepared message, and we will reply as soon as possible.')}
+                    {t('Wiadomość została wysłana. Odpiszemy najszybciej jak to możliwe.', 'Your message has been sent. We will reply as soon as possible.')}
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsSubmitted(false)}
-                  className="mt-4 text-sm font-mono uppercase tracking-widest text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[#050505] rounded-sm"
+                  className="mt-4 text-sm font-mono uppercase tracking-widest text-white/50 hover:text-white transition-colors focus:outline-none"
                 >
                   {t('Wyślij kolejną wiadomość', 'Send another message')}
                 </button>
               </motion.div>
             ) : (
-              <motion.form 
+              <motion.form
                 key="form"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col gap-8" 
+                className="flex flex-col gap-8"
                 onSubmit={handleSubmit}
                 noValidate
                 aria-label={t("Formularz kontaktowy", "Contact form")}
               >
                 <div className="flex flex-col gap-2">
                   <label htmlFor="name" className="text-xs font-mono text-white/50 uppercase tracking-widest">{t('Imię i nazwisko', 'Name')}</label>
-                  <input 
+                  <input
                     id="name"
-                    type="text" 
+                    type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     aria-invalid={touched.name && !!errors.name}
                     aria-describedby={touched.name && errors.name ? "name-error" : undefined}
-                    className={`bg-transparent border-b pb-4 text-xl focus:outline-none transition-all duration-300 rounded-none w-full hover:border-white/60 focus:border-white ${touched.name && errors.name ? 'border-red-500 text-red-100' : 'border-white/20 text-white'}`} 
-                    required 
+                    className={`bg-transparent border-b pb-4 text-xl focus:outline-none transition-all duration-300 rounded-none w-full hover:border-white/60 focus:border-white ${touched.name && errors.name ? 'border-red-500 text-red-100' : 'border-white/20 text-white'}`}
+                    required
                     aria-required="true"
                   />
                   <AnimatePresence>
                     {touched.name && errors.name && (
-                      <motion.span 
+                      <motion.span
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        id="name-error" 
-                        className="text-red-500 text-sm mt-1" 
+                        id="name-error"
+                        className="text-red-500 text-sm mt-1"
                         role="alert"
                       >
                         {errors.name}
@@ -159,30 +173,30 @@ export default function Contact() {
                     )}
                   </AnimatePresence>
                 </div>
-                
+
                 <div className="flex flex-col gap-2">
                   <label htmlFor="email" className="text-xs font-mono text-white/50 uppercase tracking-widest">{t('Email', 'Email')}</label>
-                  <input 
+                  <input
                     id="email"
-                    type="email" 
+                    type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     aria-invalid={touched.email && !!errors.email}
                     aria-describedby={touched.email && errors.email ? "email-error" : undefined}
-                    className={`bg-transparent border-b pb-4 text-xl focus:outline-none transition-all duration-300 rounded-none w-full hover:border-white/60 focus:border-white ${touched.email && errors.email ? 'border-red-500 text-red-100' : 'border-white/20 text-white'}`} 
-                    required 
+                    className={`bg-transparent border-b pb-4 text-xl focus:outline-none transition-all duration-300 rounded-none w-full hover:border-white/60 focus:border-white ${touched.email && errors.email ? 'border-red-500 text-red-100' : 'border-white/20 text-white'}`}
+                    required
                     aria-required="true"
                   />
                   <AnimatePresence>
                     {touched.email && errors.email && (
-                      <motion.span 
+                      <motion.span
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        id="email-error" 
-                        className="text-red-500 text-sm mt-1" 
+                        id="email-error"
+                        className="text-red-500 text-sm mt-1"
                         role="alert"
                       >
                         {errors.email}
@@ -190,30 +204,30 @@ export default function Contact() {
                     )}
                   </AnimatePresence>
                 </div>
-                
+
                 <div className="flex flex-col gap-2">
                   <label htmlFor="message" className="text-xs font-mono text-white/50 uppercase tracking-widest">{t('Wiadomość', 'Message')}</label>
-                  <textarea 
+                  <textarea
                     id="message"
                     name="message"
-                    rows={4} 
+                    rows={4}
                     value={formData.message}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     aria-invalid={touched.message && !!errors.message}
                     aria-describedby={touched.message && errors.message ? "message-error" : undefined}
-                    className={`bg-transparent border-b pb-4 text-xl focus:outline-none transition-all duration-300 resize-none rounded-none w-full hover:border-white/60 focus:border-white ${touched.message && errors.message ? 'border-red-500 text-red-100' : 'border-white/20 text-white'}`} 
+                    className={`bg-transparent border-b pb-4 text-xl focus:outline-none transition-all duration-300 resize-none rounded-none w-full hover:border-white/60 focus:border-white ${touched.message && errors.message ? 'border-red-500 text-red-100' : 'border-white/20 text-white'}`}
                     required
                     aria-required="true"
                   ></textarea>
                   <AnimatePresence>
                     {touched.message && errors.message && (
-                      <motion.span 
+                      <motion.span
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        id="message-error" 
-                        className="text-red-500 text-sm mt-1" 
+                        id="message-error"
+                        className="text-red-500 text-sm mt-1"
                         role="alert"
                       >
                         {errors.message}
@@ -221,15 +235,23 @@ export default function Contact() {
                     )}
                   </AnimatePresence>
                 </div>
-                
-                <button 
-                  type="submit" 
-                  disabled={Object.keys(errors).length > 0}
+
+                {sendError && (
+                  <p className="text-red-400 text-sm">
+                    {t('Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz bezpośrednio na brief@luzno.agency', 'Failed to send message. Please try again or email us directly at brief@luzno.agency')}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={Object.keys(errors).length > 0 || isSending}
                   className="group flex items-center gap-4 self-start mt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[#050505] rounded-full pr-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label={t("Wyślij wiadomość", "Send message")}
                 >
-                  <span className="text-lg uppercase tracking-widest font-medium">{t('Wyślij', 'Send')}</span>
-                  <div className="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-300 group-focus-visible:bg-white group-focus-visible:text-black">
+                  <span className="text-lg uppercase tracking-widest font-medium">
+                    {isSending ? t('Wysyłanie...', 'Sending...') : t('Wyślij', 'Send')}
+                  </span>
+                  <div className="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-300">
                     <ArrowRight className="w-5 h-5" />
                   </div>
                 </button>
@@ -247,12 +269,12 @@ export default function Contact() {
             </h3>
             <div className="flex flex-col gap-6">
               <a href="https://www.linkedin.com/company/lu%C5%BAno-digital-branding/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-xl hover:translate-x-2 transition-transform duration-300 w-fit">
-                <Linkedin className="w-6 h-6" /> 
+                <Linkedin className="w-6 h-6" />
                 <span className="font-light">LinkedIn</span>
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-xs font-mono text-white/50 uppercase tracking-widest mb-8 flex items-center gap-3">
               <span className="w-4 h-[1px] bg-white/20"></span>

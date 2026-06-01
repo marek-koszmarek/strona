@@ -1,68 +1,73 @@
+import { useMemo } from 'react';
 import { motion } from 'motion/react';
 import SEO from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 
-// Wszystkie zdjęcia ze wszystkich projektów — flat array
-const ALL_IMAGES: { src: string; alt: string }[] = [
-  // M1 / EPP
-  { src: '/M1/m1_1.webp', alt: 'EPP' },
-  { src: '/M1/m1_2.webp', alt: 'EPP' },
-  { src: '/M1/m1_3.webp', alt: 'EPP' },
-  { src: '/M1/m1_4.webp', alt: 'EPP' },
-  // SentiOne
-  { src: '/SentiOne/sentione_1.webp', alt: 'SentiOne' },
-  { src: '/SentiOne/sentione_2.webp', alt: 'SentiOne' },
-  { src: '/SentiOne/sentione_3.webp', alt: 'SentiOne' },
-  { src: '/SentiOne/sentione_4.webp', alt: 'SentiOne' },
-  // Komisja Europejska
-  { src: '/Komisja%20europejska/komisja_1.webp', alt: 'Komisja Europejska' },
-  { src: '/Komisja%20europejska/komisja_2.webp', alt: 'Komisja Europejska' },
-  { src: '/Komisja%20europejska/komisja_3.webp', alt: 'Komisja Europejska' },
-  { src: '/Komisja%20europejska/komisja_4.webp', alt: 'Komisja Europejska' },
-  // Building Companion
-  { src: '/Builing%20companion/buildingcompanion_1.webp', alt: 'Building Companion' },
-  { src: '/Builing%20companion/buildingcompanion_2.webp', alt: 'Building Companion' },
-  { src: '/Builing%20companion/buildingcompanion_3.webp', alt: 'Building Companion' },
-  { src: '/Builing%20companion/buildingcompanion_4.webp', alt: 'Building Companion' },
-  // Monting
-  { src: '/Monting/monting_1.webp', alt: 'Monting Development' },
-  { src: '/Monting/monting_2.webp', alt: 'Monting Development' },
-  { src: '/Monting/monting_3.webp', alt: 'Monting Development' },
-  { src: '/Monting/monting_4.webp', alt: 'Monting Development' },
-  // Bean and Buddies
-  { src: '/Bean/beanandbuddies_1.webp', alt: 'Bean and Buddies' },
-  { src: '/Bean/beanandbuddies_2.webp', alt: 'Bean and Buddies' },
-  { src: '/Bean/beanandbuddies_3.webp', alt: 'Bean and Buddies' },
-  { src: '/Bean/beanandbuddies_4.webp', alt: 'Bean and Buddies' },
-  // Portman Lights
-  { src: '/Portman%20Lights/portman_1.webp', alt: 'Portman Lights' },
-  { src: '/Portman%20Lights/portman_2.webp', alt: 'Portman Lights' },
-  { src: '/Portman%20Lights/portman_3.webp', alt: 'Portman Lights' },
-  { src: '/Portman%20Lights/portman_4.webp', alt: 'Portman Lights' },
-  // Punkta
-  { src: '/Punkta/punkta_1.webp', alt: 'Punkta' },
-  { src: '/Punkta/punkta_2.webp', alt: 'Punkta' },
-  { src: '/Punkta/punkta_3.webp', alt: 'Punkta' },
-  { src: '/Punkta/punkta_4.webp', alt: 'Punkta' },
-  // eN Studios
-  { src: '/eN%20Studios/enstudios_1.webp', alt: 'En Studios' },
-  { src: '/eN%20Studios/enstudios_2.webp', alt: 'En Studios' },
-  { src: '/eN%20Studios/enstudios_3.webp', alt: 'En Studios' },
-  { src: '/eN%20Studios/enstudios_4.webp', alt: 'En Studios' },
-  // Luba
-  { src: '/Luba/luba_1.webp', alt: 'Luba Group' },
-  { src: '/Luba/luba_2.webp', alt: 'Luba Group' },
-  { src: '/Luba/luba_3.webp', alt: 'Luba Group' },
-  { src: '/Luba/luba_4.webp', alt: 'Luba Group' },
-  // Archicom
-  { src: '/Archicom/archicom_1.webp', alt: 'Archicom' },
-  { src: '/Archicom/archicom_2.webp', alt: 'Archicom' },
-  { src: '/Archicom/archicom_3.webp', alt: 'Archicom' },
-  { src: '/Archicom/archicom_4.webp', alt: 'Archicom' },
+// ─── Dane klientów ─────────────────────────────────────────────────────────────
+// folder   = nazwa folderu w public/prace/ (lowercase)
+// alt      = nazwa klienta (alt text / SEO)
+// items    = lista "{numer}_{proporcja}" — proporcja czytana z sufiksu nazwy pliku
+//            11 = 1:1 | 45 = 4:5 | 916 = 9:16 | 1910 = 19:10 | 43 = 4:3
+// Pełna ścieżka pliku: /prace/{folder}/{folder}_{item}.webp
+const CLIENTS: { folder: string; alt: string; items: string[] }[] = [
+  { folder: 'archicom', alt: 'Archicom', items: ['1_45','2_1910','3_1910','4_1910','5_45','6_45','7_11','8_11','9_11','10_11','11_11','12_11','13_11','14_45','15_11','16_45','17_45','18_45','19_11','20_11','21_11','22_11','23_11','24_11','25_11','26_11','27_45','28_11','29_11','30_11','31_45','32_45','33_11','34_11','35_11','36_11','37_11','38_11','39_11','40_45','41_45','42_45'] },
+  { folder: 'm1', alt: 'M1 / EPP', items: ['1_916','2_916','3_45','4_45','5_45','6_45','7_45','8_45','9_45','10_916','11_916','12_45','13_45','14_45','15_45','16_45','17_45','18_916','19_45','20_45','21_916','22_916','23_916','24_916','25_916','26_916','27_916','28_916','29_916','30_916','31_45','32_45','33_916','34_45'] },
+  { folder: 'beanbuddies', alt: 'Bean & Buddies', items: ['1_11','2_11','3_11','4_11','5_11','6_11','7_11','8_11','9_11','10_11','11_11','12_11','13_11','14_11','15_11','16_11','17_11','18_11'] },
+  { folder: 'building', alt: 'Building Companion', items: ['1_11','2_11','3_11','4_11','5_11','6_11','7_11','8_11'] },
+  { folder: 'cityspace', alt: 'CitySpace', items: ['1_11','2_11','3_11','4_11','5_11','6_11','7_11','8_11','9_11','10_11','11_11','12_11','13_11','14_11','15_11','16_11','17_11','18_11'] },
+  { folder: 'europodroze', alt: 'Europodróże', items: ['1_45','2_11','3_11','4_11','5_11','6_11','7_11','8_916','9_916','10_916','11_1910','12_1910','13_11','14_11','15_11','16_11','17_11','18_11','19_11','20_11','21_11','22_916','23_916','24_916'] },
+  { folder: 'fitme', alt: 'FitMe', items: ['1_11','2_11','3_11','4_11','5_11','6_11','7_11','8_11','9_11','10_11','11_11','12_11'] },
+  { folder: 'itaxi', alt: 'iTaxi', items: ['1_45','2_45','3_45','4_45','5_45','6_45','7_45','8_45','9_45'] },
+  { folder: 'portman', alt: 'Portman Lights', items: ['1_11','2_11','3_11','4_11','5_11','6_11','7_11','8_11','9_11','10_11','11_11','12_11','13_11','14_11','15_11','16_11'] },
+  { folder: 'pufy', alt: 'Pufy', items: ['1_11','2_11','3_11','4_11','5_11','6_11','7_11','8_11','9_11','10_11','11_11'] },
+  { folder: 'pularys', alt: 'Pularys', items: ['1_45','2_45','3_45','4_45','5_45','6_45','7_45'] },
+  { folder: 'punkta', alt: 'Punkta', items: ['1_11','2_11','3_11','4_11','5_11','6_11','7_11','8_11','9_11','10_11','11_11','12_11'] },
+  { folder: 'remmed', alt: 'Remmed Vision', items: ['1_11','2_11','3_11','4_11','5_11','6_11'] },
+  { folder: 'root7', alt: 'Root7', items: ['1_45','2_45','3_45','4_45','5_45','6_45','7_45','8_45','9_45','10_45','11_45','12_45'] },
 ];
+
+// Sufiks proporcji → wartość CSS aspect-ratio
+const RATIO_MAP: Record<string, string> = {
+  '11': '1 / 1',
+  '43': '4 / 3',
+  '45': '4 / 5',
+  '916': '9 / 16',
+  '1910': '19 / 10',
+};
+
+type GalleryImage = { src: string; alt: string; ratio: string };
+
+// Spłaszcza CLIENTS → płaska lista wszystkich zdjęć z gotową ścieżką i proporcją
+function buildImages(): GalleryImage[] {
+  const out: GalleryImage[] = [];
+  for (const { folder, alt, items } of CLIENTS) {
+    for (const item of items) {
+      const ratioKey = item.split('_')[1];
+      out.push({
+        src: `/prace/${folder}/${folder}_${item}.webp`,
+        alt,
+        ratio: RATIO_MAP[ratioKey] ?? '1 / 1',
+      });
+    }
+  }
+  return out;
+}
+
+// Fisher–Yates — losowe wymieszanie (deterministyczne w obrębie jednego mountu)
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 export default function CaseStudies() {
   const { t } = useLanguage();
+
+  // Mieszamy raz na mount — stabilne podczas scrollowania, inne przy każdej wizycie
+  const images = useMemo(() => shuffle(buildImages()), []);
 
   return (
     <motion.main
@@ -73,7 +78,7 @@ export default function CaseStudies() {
       className="bg-[#050505] min-h-[100dvh] text-white pt-32 pb-24 px-6 sm:px-8 md:px-16 lg:px-24"
     >
       <SEO
-        title="Case Studies | Luźno Agency"
+        title="Prace | Luźno Agency"
         description="Nasze realizacje — kampanie, strategie i projekty dla topowych marek."
       />
 
@@ -90,30 +95,28 @@ export default function CaseStudies() {
         </h1>
       </div>
 
-      {/* Instagram-style grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-2"
-      >
-        {ALL_IMAGES.map((img, i) => (
+      {/* Masonry — kolumny CSS. Każde zdjęcie zachowuje swoją proporcję. */}
+      <div className="columns-2 md:columns-3 lg:columns-4 gap-2 sm:gap-3 [column-fill:_balance]">
+        {images.map((img, i) => (
           <motion.div
-            key={i}
+            key={img.src}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: i * 0.02 }}
-            className="aspect-square overflow-hidden bg-white/5 relative group"
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.5, delay: (i % 8) * 0.04 }}
+            className="mb-2 sm:mb-3 break-inside-avoid overflow-hidden bg-white/5 relative group"
+            style={{ aspectRatio: img.ratio }}
           >
             <img
               src={img.src}
               alt={img.alt}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover grayscale opacity-70 transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
             />
           </motion.div>
         ))}
-      </motion.div>
-
+      </div>
     </motion.main>
   );
 }

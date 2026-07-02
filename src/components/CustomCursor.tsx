@@ -1,18 +1,9 @@
-import { useEffect, useState } from 'react';
-import { motion, useMotionValue, useSpring } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function CustomCursor() {
-  const [isHovering, setIsHovering] = useState(false);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const dotX = useSpring(mouseX, { stiffness: 500, damping: 28, mass: 0.5 });
-  const dotY = useSpring(mouseY, { stiffness: 500, damping: 28, mass: 0.5 });
-
-  const ringX = useSpring(mouseX, { stiffness: 150, damping: 15, mass: 0.5 });
-  const ringY = useSpring(mouseY, { stiffness: 150, damping: 15, mass: 0.5 });
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) {
@@ -20,31 +11,56 @@ export default function CustomCursor() {
       return;
     }
 
-    const updateMousePosition = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
+    let ringX = 0, ringY = 0;
+    let mouseX = 0, mouseY = 0;
+    let ringOffset = 24;
+    let rafId: number;
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName.toLowerCase() === 'a' ||
-        target.tagName.toLowerCase() === 'button' ||
-        target.closest('a') ||
-        target.closest('button')
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
+    const onMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${mouseX - 6}px, ${mouseY - 6}px)`;
       }
     };
 
-    window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('mouseover', handleMouseOver);
+    const animate = () => {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${ringX - ringOffset}px, ${ringY - ringOffset}px)`;
+      }
+      rafId = requestAnimationFrame(animate);
+    };
+    rafId = requestAnimationFrame(animate);
+
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const hovering =
+        target.tagName === 'A' ||
+        target.tagName === 'BUTTON' ||
+        !!target.closest('a') ||
+        !!target.closest('button');
+
+      if (dotRef.current) {
+        dotRef.current.style.width = hovering ? '18px' : '12px';
+        dotRef.current.style.height = hovering ? '18px' : '12px';
+      }
+      if (ringRef.current) {
+        ringOffset = hovering ? 31 : 24;
+        ringRef.current.style.opacity = hovering ? '0.8' : '0.3';
+        ringRef.current.style.width = hovering ? '62px' : '48px';
+        ringRef.current.style.height = hovering ? '62px' : '48px';
+      }
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseover', onMouseOver);
 
     return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseover', onMouseOver);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -52,55 +68,15 @@ export default function CustomCursor() {
 
   return (
     <>
-      <motion.div
+      <div
+        ref={dotRef}
         className="fixed top-0 left-0 w-3 h-3 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
-        style={{
-          x: dotX,
-          y: dotY,
-          translateX: -6,
-          translateY: -6,
-        }}
-        animate={{
-          scale: isHovering ? 1.5 : 1,
-        }}
-        transition={{ type: 'tween', ease: 'backOut', duration: 0.15 }}
+        style={{ transition: 'width 0.2s, height 0.2s', willChange: 'transform' }}
       />
-      <motion.div
-        className="fixed top-0 left-0 w-12 h-12 border border-white rounded-full pointer-events-none z-[9998] mix-blend-difference"
-        style={{
-          x: ringX,
-          y: ringY,
-          translateX: -24,
-          translateY: -24,
-        }}
-        animate={
-          isHovering
-            ? {
-                scale: [1, 1.3, 1],
-                opacity: [0.3, 0.8, 0.3],
-                boxShadow: [
-                  '0px 0px 0px 0px rgba(255,255,255,0)',
-                  '0px 0px 20px 5px rgba(255,255,255,0.6)',
-                  '0px 0px 0px 0px rgba(255,255,255,0)',
-                ],
-                backgroundColor: 'rgba(255, 255, 255, 0)',
-              }
-            : {
-                scale: 1,
-                opacity: 0.3,
-                boxShadow: '0px 0px 0px 0px rgba(255,255,255,0)',
-                backgroundColor: 'rgba(255, 255, 255, 0)',
-              }
-        }
-        transition={
-          isHovering
-            ? {
-                scale: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' },
-                opacity: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' },
-                boxShadow: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' },
-              }
-            : {}
-        }
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 w-12 h-12 border border-white rounded-full pointer-events-none z-[9998] mix-blend-difference opacity-30"
+        style={{ transition: 'opacity 0.3s, width 0.3s, height 0.3s', willChange: 'transform' }}
       />
     </>
   );

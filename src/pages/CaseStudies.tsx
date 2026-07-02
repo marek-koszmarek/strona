@@ -3,12 +3,6 @@ import { motion } from 'motion/react';
 import SEO from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 
-// ─── Dane klientów ─────────────────────────────────────────────────────────────
-// folder   = nazwa folderu w public/prace/ (lowercase)
-// alt      = nazwa klienta (alt text / SEO)
-// items    = lista "{numer}_{proporcja}" — proporcja czytana z sufiksu nazwy pliku
-//            11 = 1:1 | 45 = 4:5 | 916 = 9:16 | 1910 = 19:10 | 43 = 4:3
-// Pełna ścieżka pliku: /prace/{folder}/{folder}_{item}.webp
 const CLIENTS: { folder: string; alt: string; items: string[] }[] = [
   { folder: 'archicom', alt: 'Archicom', items: ['1_45','2_1910','3_1910','4_1910','5_45','6_45','7_11','8_11','9_11','10_11','11_11','12_11','13_11','14_45','15_11','16_45','17_45','18_45','19_11','20_11','21_11','22_11','23_11','24_11','25_11','26_11','27_45','28_11','29_11','30_11','31_45','32_45','33_11','34_11','35_11','36_11','37_11','38_11','39_11','40_45','41_45','42_45'] },
   { folder: 'm1', alt: 'M1 / EPP', items: ['1_916','2_916','3_45','4_45','5_45','6_45','7_45','8_45','9_45','10_916','11_916','12_45','13_45','14_45','15_45','16_45','17_45','18_916','19_45','20_45','21_916','22_916','23_916','24_916','25_916','26_916','27_916','28_916','29_916','30_916','31_45','32_45','33_916','34_45'] },
@@ -26,7 +20,6 @@ const CLIENTS: { folder: string; alt: string; items: string[] }[] = [
   { folder: 'root7', alt: 'Root7', items: ['1_45','2_45','3_45','4_45','5_45','6_45','7_45','8_45','9_45','10_45','11_45','12_45'] },
 ];
 
-// Sufiks proporcji → wartość CSS aspect-ratio
 const RATIO_MAP: Record<string, string> = {
   '11': '1 / 1',
   '43': '4 / 3',
@@ -37,7 +30,6 @@ const RATIO_MAP: Record<string, string> = {
 
 type GalleryImage = { src: string; alt: string; ratio: string };
 
-// Spłaszcza CLIENTS → płaska lista wszystkich zdjęć z gotową ścieżką i proporcją
 function buildImages(): GalleryImage[] {
   const out: GalleryImage[] = [];
   for (const { folder, alt, items } of CLIENTS) {
@@ -53,7 +45,6 @@ function buildImages(): GalleryImage[] {
   return out;
 }
 
-// Fisher–Yates — losowe wymieszanie (deterministyczne w obrębie jednego mountu)
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -65,8 +56,6 @@ function shuffle<T>(arr: T[]): T[] {
 
 export default function CaseStudies() {
   const { t } = useLanguage();
-
-  // Mieszamy raz na mount — stabilne podczas scrollowania, inne przy każdej wizycie
   const images = useMemo(() => shuffle(buildImages()), []);
 
   return (
@@ -81,8 +70,6 @@ export default function CaseStudies() {
         title="Prace | Luźno Agency"
         description="Nasze realizacje — kampanie, strategie i projekty dla topowych marek."
       />
-
-      {/* Nagłówek */}
       <div className="mb-12 md:mb-16">
         <div className="flex items-center gap-4 mb-8">
           <div className="w-12 h-[1px] bg-white/30" />
@@ -94,8 +81,6 @@ export default function CaseStudies() {
           {t('Prace', 'Work')}
         </h1>
       </div>
-
-      {/* Masonry — kolumny CSS. Każde zdjęcie zachowuje swoją proporcję. */}
       <div className="columns-2 md:columns-3 lg:columns-4 gap-2 sm:gap-3 [column-fill:_balance]">
         {images.map((img, i) => (
           <motion.div
@@ -112,7 +97,7 @@ export default function CaseStudies() {
               alt={img.alt}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover grayscale opacity-70 transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+              className="w-full h-full object-cover grayscale opacity-70 transition-[filter,opacity,transform] duration-500 ease-out group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
             />
           </motion.div>
         ))}
